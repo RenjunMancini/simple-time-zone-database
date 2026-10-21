@@ -27,3 +27,10 @@ The trade-off: the data is a fixed snapshot. It is correct as written but will g
 ## The awkward edge
 
 DST transition dates are not modeled. Each `TimezoneInfo` carries a `dst_offset_seconds` (typically 3600 or 0) but not when DST starts or ends. If you need to know whether a zone is in DST at a given instant, this library is insufficient — use `zoneinfo` or `datetime.tzinfo` for that. The `dst_offset_seconds` is the magnitude of the shift, not a flag that DST is active.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
